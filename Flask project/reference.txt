@@ -1,0 +1,5 @@
+Ubuntu 22.04.4 LTS
+Python 3.10.12
+Docker 26.1.0, build 9714adc
+Flask 3.0.3
+psql (PostgreSQL) 16.2
