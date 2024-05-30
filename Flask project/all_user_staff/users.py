@@ -76,7 +76,7 @@ def create_user():
     }
 })
 def get_user(user_id):
-    user = UserTable.get_or_none(UserTable.id == user_id)
+    user = UserTable.get_or_none((UserTable.id == user_id) & (UserTable.is_deleted == False))
     if user:
         user_serializer = UserSerializer(user)
         return jsonify(user_serializer.serialize())
@@ -110,7 +110,7 @@ def get_user(user_id):
 })
 def put_user(user_id):
     data = request.get_json()
-    user = UserTable.get_or_none(UserTable.id == user_id)
+    user = UserTable.get_or_none((UserTable.id == user_id) & (UserTable.is_deleted == False))
     if user:
         user.user_table_name = data.get("name", user.user_table_name)
         user.user_table_name = data.get("username", user.user_table_username)
@@ -139,7 +139,8 @@ def put_user(user_id):
 def delete_user(user_id):
     user = UserTable.get_or_none(UserTable.id == user_id)
     if user:
-        user.delete_instance(recursive=True)
+        user.is_deleted = True
+        user.save()
         return jsonify({"message": "Пользователь удален"}), 200
     else:
         return jsonify({"error": "Пользователь не найден"}), 404
