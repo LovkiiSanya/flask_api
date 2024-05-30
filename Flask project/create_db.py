@@ -16,6 +16,7 @@ class UserTable(BaseModel):
     user_table_age = TextField(column_name="age")
     user_table_profession = TextField(column_name="profession")
     user_table_date = DateTimeField(column_name="registration_date")
+    is_deleted = BooleanField(default=False)
 
     def serialize(self):
         return {
@@ -35,6 +36,7 @@ class CoursesTable(BaseModel):
     courses_table_duration = TextField(column_name="duration")
     courses_table_language = TextField(column_name="language")
     courses_table_date = DateTimeField(column_name="start courses")
+    is_deleted = BooleanField(default=False)
 
     def serialize(self):
         return {"id": self.id,
@@ -49,6 +51,7 @@ class CoursesTable(BaseModel):
 class UserCourse(BaseModel):
     user = ForeignKeyField(UserTable, backref='courses', on_delete='CASCADE')
     course = ForeignKeyField(CoursesTable, backref='users', on_delete='CASCADE')
+    is_deleted = BooleanField(default=False)
 
     class Meta:
         database = connection
