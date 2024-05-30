@@ -78,7 +78,8 @@ def create_user_course():
     }
 })
 def get_user_course(user_id, course_id):
-    user_course = UserCourse.get_or_none((UserCourse.user == user_id) & (UserCourse.course == course_id))
+    user_course = UserCourse.get_or_none(
+        ((UserCourse.user == user_id) & (UserCourse.course == course_id)) & (UserCourse.is_deleted == False))
     if not user_course:
         return jsonify({"error": "Запись не найдена"}), 404
 
@@ -121,7 +122,8 @@ def update_user_course(user_id, course_id):
     if not new_user_id or not new_course_id:
         return jsonify({"error": "Отстутвует user_id или course_id"}), 400
 
-    user_course = UserCourse.get_or_none((UserCourse.user == user_id) & (UserCourse.course == course_id))
+    user_course = UserCourse.get_or_none(
+        ((UserCourse.user == user_id) & (UserCourse.course == course_id)) & (UserCourse.is_deleted == False))
     if user_course:
         user_course.user = new_user_id
         user_course.course = new_course_id
@@ -141,7 +143,8 @@ def update_user_course(user_id, course_id):
 def delete_user_course(user_id, course_id):
     user_course = UserCourse.get_or_none((UserCourse.user == user_id) & (UserCourse.course == course_id))
     if user_course:
-        user_course.delete_instance(recursive=True)
+        user_course.is_deleted = True
+        user_course.save()
         return jsonify({"message": "Запись удалена"}), 200
     else:
         return jsonify({"error": "Запись не найдена"}), 404
