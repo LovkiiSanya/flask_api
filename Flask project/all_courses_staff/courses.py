@@ -79,7 +79,7 @@ def create_course():
     }
 })
 def get_course(course_id):
-    courses = CoursesTable.get_or_none(CoursesTable.id == course_id)
+    courses = CoursesTable.get_or_none((CoursesTable.id == course_id) & (CoursesTable.is_deleted == False))
     if courses:
         course_serializer = CourseSerializer(courses)
         return jsonify(course_serializer.serialize())
@@ -117,7 +117,7 @@ def get_course(course_id):
 })
 def put_course_logic(course_id):
     data = request.get_json()
-    course = CoursesTable.get_or_none(CoursesTable.id == course_id)
+    course = CoursesTable.get_or_none((CoursesTable.id == course_id) & (CoursesTable.is_deleted == False))
     if course:
         course.courses_table_price = data.get('price', course.courses_table_price)
         course.courses_table_language = data.get('language', course.courses_table_language)
@@ -163,7 +163,8 @@ def put_course_logic(course_id):
 def delete_course(course_id):
     course = CoursesTable.get_or_none(CoursesTable.id == course_id)
     if course:
-        course.delete_instance(recursive=True)
+        course.is_deleted = True
+        course.save()
         return jsonify({"message": "Курс удален"}), 200
     else:
         return jsonify({"error": "Курс не найден"}), 404
